@@ -12,7 +12,13 @@ import {
   Calendar,
   Layers,
   Sparkles,
-  Plus
+  Plus,
+  Wallet as WalletIcon,
+  Landmark,
+  CreditCard,
+  Smartphone,
+  Banknote,
+  SlidersHorizontal
 } from 'lucide-react';
 import { Transaction, Category, Wallet } from '@/lib/types';
 import { formatCurrency, formatDateVietnamese, CATEGORY_COLORS } from '@/lib/utils';
@@ -24,6 +30,7 @@ interface TransactionListProps {
   onOpenNew: () => void;
   categories: Category[];
   wallets: Wallet[];
+  onOpenWalletManagement: () => void;
 }
 
 export function TransactionList({
@@ -33,6 +40,7 @@ export function TransactionList({
   onOpenNew,
   categories,
   wallets,
+  onOpenWalletManagement,
 }: TransactionListProps) {
   const [searchTerm, setSearchTerm] = useState('');
   const [typeFilter, setTypeFilter] = useState<'all' | 'income' | 'expense'>('all');
@@ -166,6 +174,71 @@ export function TransactionList({
           }`}>
             {totals.balance >= 0 ? '+' : ''}{formatCurrency(totals.balance)}
           </div>
+        </div>
+      </div>
+
+      {/* Wallets & Payment Sources Ribbon */}
+      <div className="p-3 sm:p-4 rounded-xl sm:rounded-2xl bg-white dark:bg-zinc-900 border border-zinc-200/80 dark:border-zinc-800/80 shadow-xs sm:shadow-sm">
+        <div className="flex items-center justify-between mb-2">
+          <div className="flex items-center gap-2">
+            <WalletIcon className="w-4 h-4 text-zinc-500 dark:text-zinc-400" />
+            <h3 className="text-xs font-semibold text-zinc-900 dark:text-zinc-100">
+              Nguồn tiền & Ví ({wallets.length})
+            </h3>
+          </div>
+          <button
+            onClick={onOpenWalletManagement}
+            className="text-xs font-medium text-blue-600 dark:text-blue-400 hover:underline flex items-center gap-1"
+          >
+            <Plus className="w-3.5 h-3.5" />
+            <span>Thêm / Quản lý ví</span>
+          </button>
+        </div>
+
+        {/* Horizontal scrollable wallet badges */}
+        <div className="flex items-center gap-2 overflow-x-auto pb-1">
+          {wallets.map((w) => {
+            const isSelected = walletFilter === w.name;
+            return (
+              <button
+                key={w.id}
+                onClick={() => setWalletFilter(isSelected ? 'all' : w.name)}
+                className={`flex items-center gap-2 px-3 py-2 rounded-xl text-left border transition-all shrink-0 ${
+                  isSelected
+                    ? 'bg-zinc-900 text-white dark:bg-zinc-100 dark:text-zinc-950 border-transparent shadow-xs'
+                    : 'bg-zinc-50 dark:bg-zinc-950/60 border-zinc-200/70 dark:border-zinc-800 text-zinc-800 dark:text-zinc-200 hover:border-zinc-400'
+                }`}
+                title="Bấm để lọc theo nguồn tiền này"
+              >
+                <div className={`p-1 rounded-lg ${
+                  isSelected ? 'bg-white/20 dark:bg-black/20' : 'bg-white dark:bg-zinc-900 shadow-xs'
+                }`}>
+                  {w.type === 'bank' && <Landmark className={`w-3.5 h-3.5 ${isSelected ? 'text-white dark:text-zinc-950' : 'text-blue-500'}`} />}
+                  {w.type === 'e-wallet' && <Smartphone className={`w-3.5 h-3.5 ${isSelected ? 'text-white dark:text-zinc-950' : 'text-pink-500'}`} />}
+                  {w.type === 'card' && <CreditCard className={`w-3.5 h-3.5 ${isSelected ? 'text-white dark:text-zinc-950' : 'text-purple-500'}`} />}
+                  {w.type === 'cash' && <Banknote className={`w-3.5 h-3.5 ${isSelected ? 'text-white dark:text-zinc-950' : 'text-emerald-500'}`} />}
+                </div>
+                <div>
+                  <div className="text-[11px] font-semibold leading-none truncate max-w-[130px]">
+                    {w.name}
+                  </div>
+                  <div className={`text-[10px] mt-1 font-medium ${
+                    isSelected ? 'text-zinc-300 dark:text-zinc-700' : 'text-zinc-500 dark:text-zinc-400'
+                  }`}>
+                    {formatCurrency(w.balance)}
+                  </div>
+                </div>
+              </button>
+            );
+          })}
+
+          <button
+            onClick={onOpenWalletManagement}
+            className="flex items-center gap-1 px-2.5 py-2 rounded-xl border border-dashed border-zinc-300 dark:border-zinc-700 hover:border-zinc-500 text-zinc-500 dark:text-zinc-400 text-xs shrink-0 transition-colors"
+          >
+            <Plus className="w-3.5 h-3.5" />
+            <span>Thêm ví</span>
+          </button>
         </div>
       </div>
 

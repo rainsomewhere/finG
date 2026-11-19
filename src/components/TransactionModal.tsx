@@ -12,6 +12,7 @@ interface TransactionModalProps {
   initialData?: Transaction | null;
   categories: Category[];
   wallets: Wallet[];
+  onOpenWalletManagement?: () => void;
 }
 
 export function TransactionModal({
@@ -21,6 +22,7 @@ export function TransactionModal({
   initialData,
   categories,
   wallets,
+  onOpenWalletManagement,
 }: TransactionModalProps) {
   const [type, setType] = useState<TransactionType>('expense');
   const [amount, setAmount] = useState<string>('');
@@ -224,10 +226,21 @@ export function TransactionModal({
             </div>
 
             <div>
-              <label className="flex items-center gap-1.5 text-xs font-medium text-zinc-500 dark:text-zinc-400 mb-1">
-                <WalletIcon className="w-3.5 h-3.5" />
-                <span>Nguồn tiền / Ví</span>
-              </label>
+              <div className="flex items-center justify-between mb-1">
+                <label className="flex items-center gap-1.5 text-xs font-medium text-zinc-500 dark:text-zinc-400">
+                  <WalletIcon className="w-3.5 h-3.5" />
+                  <span>Nguồn tiền / Ví</span>
+                </label>
+                {onOpenWalletManagement && (
+                  <button
+                    type="button"
+                    onClick={onOpenWalletManagement}
+                    className="text-[11px] font-medium text-blue-600 dark:text-blue-400 hover:underline"
+                  >
+                    + Thêm/Sửa ví
+                  </button>
+                )}
+              </div>
               <select
                 value={wallet}
                 onChange={(e) => setWallet(e.target.value)}

@@ -8,6 +8,7 @@ import { TransactionModal } from '@/components/TransactionModal';
 import { ReportsView } from '@/components/ReportsView';
 import { NotesView } from '@/components/NotesView';
 import { AuthModal } from '@/components/AuthModal';
+import { WalletManagementModal } from '@/components/WalletManagementModal';
 import { User, Transaction, FinancialNote, Category, Wallet } from '@/lib/types';
 
 export default function HomePage() {
@@ -26,6 +27,7 @@ export default function HomePage() {
   const [isTxModalOpen, setIsTxModalOpen] = useState(false);
   const [editingTx, setEditingTx] = useState<Transaction | null>(null);
   const [isAuthModalOpen, setIsAuthModalOpen] = useState(false);
+  const [isWalletModalOpen, setIsWalletModalOpen] = useState(false);
 
   // Dark mode
   const [darkMode, setDarkMode] = useState(false);
@@ -182,6 +184,42 @@ export default function HomePage() {
     }
   };
 
+  // Wallets handlers
+  const handleAddWallet = async (data: { name: string; type: Wallet['type']; balance: number }) => {
+    const res = await fetch('/api/wallets', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(data),
+    });
+    if (!res.ok) {
+      const err = await res.json();
+      throw new Error(err.error || 'Thêm nguồn tiền thất bại');
+    }
+    await fetchData();
+  };
+
+  const handleUpdateWallet = async (id: string, data: { name: string; type: Wallet['type']; balance: number }) => {
+    const res = await fetch(`/api/wallets/${id}`, {
+      method: 'PUT',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(data),
+    });
+    if (!res.ok) {
+      const err = await res.json();
+      throw new Error(err.error || 'Cập nhật nguồn tiền thất bại');
+    }
+    await fetchData();
+  };
+
+  const handleDeleteWallet = async (id: string) => {
+    const res = await fetch(`/api/wallets/${id}`, { method: 'DELETE' });
+    if (!res.ok) {
+      const err = await res.json();
+      throw new Error(err.error || 'Xóa nguồn tiền thất bại');
+    }
+    await fetchData();
+  };
+
   // Auth handlers
   const handleGoogleSuccess = async (credential: string) => {
     const res = await fetch('/api/auth/google', {
@@ -250,6 +288,7 @@ export default function HomePage() {
                 }}
                 categories={categories}
                 wallets={wallets}
+                onOpenWalletManagement={() => setIsWalletModalOpen(true)}
               />
             )}
 
@@ -288,6 +327,17 @@ export default function HomePage() {
         initialData={editingTx}
         categories={categories}
         wallets={wallets}
+        onOpenWalletManagement={() => setIsWalletModalOpen(true)}
+      />
+
+      {/* Wallet & Payment Source Management Modal */}
+      <WalletManagementModal
+        isOpen={isWalletModalOpen}
+        onClose={() => setIsWalletModalOpen(false)}
+        wallets={wallets}
+        onAddWallet={handleAddWallet}
+        onUpdateWallet={handleUpdateWallet}
+        onDeleteWallet={handleDeleteWallet}
       />
 
       {/* Auth Modal */}
