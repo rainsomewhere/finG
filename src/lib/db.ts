@@ -35,11 +35,19 @@ function initDatabase(db: DatabaseSync) {
       name TEXT NOT NULL,
       avatar TEXT,
       google_id TEXT UNIQUE,
+      password_hash TEXT,
       currency TEXT DEFAULT 'VND',
       created_at TEXT NOT NULL,
       updated_at TEXT NOT NULL
     );
   `);
+
+  // Migration: ensure password_hash column exists for existing databases
+  try {
+    db.exec(`ALTER TABLE users ADD COLUMN password_hash TEXT;`);
+  } catch {
+    // Column already exists, safe to ignore
+  }
 
   // Categories table
   db.exec(`

@@ -296,6 +296,10 @@ export default function HomePage() {
         onClose={() => setIsAuthModalOpen(false)}
         onGoogleSuccess={handleGoogleSuccess}
         onGuestLogin={handleGuestLogin}
+        onAuthSuccess={async () => {
+          await fetchUser();
+          await fetchData();
+        }}
         isDemo={isDemo}
       />
     </div>

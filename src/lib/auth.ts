@@ -1,3 +1,4 @@
+import crypto from 'node:crypto';
 import { SignJWT, jwtVerify } from 'jose';
 import { cookies } from 'next/headers';
 import { NextRequest } from 'next/server';
@@ -91,6 +92,23 @@ export function parseGoogleIdToken(idToken: string): { email: string; name: stri
   } catch (err) {
     console.error('Failed to parse Google ID token:', err);
     return null;
+  }
+}
+
+export function hashPassword(password: string): string {
+  const salt = crypto.randomBytes(16).toString('hex');
+  const derivedKey = crypto.scryptSync(password, salt, 64);
+  return `${salt}:${derivedKey.toString('hex')}`;
+}
+
+export function verifyPassword(password: string, combinedHash: string): boolean {
+  try {
+    const [salt, key] = combinedHash.split(':');
+    if (!salt || !key) return false;
+    const derivedKey = crypto.scryptSync(password, salt, 64);
+    return crypto.timingSafeEqual(Buffer.from(key, 'hex'), derivedKey);
+  } catch {
+    return false;
   }
 }
 

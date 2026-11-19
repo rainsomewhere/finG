@@ -6,6 +6,7 @@ export interface User {
   name: string;
   avatar?: string;
   google_id?: string;
+  password_hash?: string;
   currency: string;
   created_at: string;
   updated_at: string;

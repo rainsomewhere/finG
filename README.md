@@ -35,10 +35,11 @@
    - Ghim các ghi chú quan trọng lên đầu danh sách.
    - Đánh dấu màu sắc (Xanh dương, Xanh lá, Vàng hổ phách, Tím, Hồng) và gắn hashtag phân loại.
 
-5. **Đăng Nhập & Liên Kết Google (Google Auth & Demo Mode)**:
-   - Tích hợp chuẩn Google Identity Services (OAuth 2.0).
-   - Dữ liệu độc lập theo từng tài khoản đăng nhập.
-   - **Chế độ Khách (Demo Mode)**: Trải nghiệm và kiểm thử ngay mọi chức năng với dữ liệu mẫu chân thực mà không cần cài đặt API Google.
+5. **Xác Thực Đa Dạng (Email & Mật khẩu + Google OAuth + Demo Mode)**:
+   - **Đăng ký / Đăng nhập bằng Email**: Hỗ trợ tạo tài khoản trực tiếp bằng email cá nhân với mật khẩu được băm bảo mật (`scrypt` + salt ngẫu nhiên).
+   - **Đăng nhập Google**: Tích hợp chuẩn Google Identity Services (OAuth 2.0).
+   - **Phân quyền dữ liệu độc lập**: Mỗi tài khoản (email hoặc Google) có không gian lưu trữ giao dịch, danh mục, ví và ghi chú riêng biệt.
+   - **Chế độ Khách (Demo Mode)**: Trải nghiệm và kiểm thử ngay mọi chức năng với dữ liệu mẫu chân thực mà không bắt buộc đăng nhập.
 
 ---
 
